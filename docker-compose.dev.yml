@@ -1,0 +1,52 @@
+version: '3.8'
+
+# Development environment overrides
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  rag-api:
+    # Enable hot reload for development
+    volumes:
+      - ./rag-system/src:/app/src:rw
+      - ./rag-system/config:/app/config:rw
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    # Override command for development server with auto-reload
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+    # No restart policy in development
+    restart: "no"
+
+  etl-api:
+    # Enable hot reload for development
+    volumes:
+      - ./ai-etl-framework/src:/app/src:rw
+      - ./ai-etl-framework/examples:/app/examples:rw
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    # Override command for development server with auto-reload
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+    # No restart policy in development
+    restart: "no"
+
+  opensearch:
+    # More verbose logging for development
+    environment:
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx1g
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - bootstrap.memory_lock=true
+      - logger.level=DEBUG
+    # No restart policy in development
+    restart: "no"
+
+  opensearch-dashboards:
+    # No restart policy in development
+    restart: "no"
+
+  postgres:
+    # Expose more verbose logging in development
+    command: postgres -c log_statement=all -c log_destination=stderr
+    # No restart policy in development
+    restart: "no"

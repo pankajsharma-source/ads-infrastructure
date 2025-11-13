@@ -1,0 +1,116 @@
+version: '3.8'
+
+# AWS production environment overrides
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.aws.yml up -d
+
+services:
+  rag-api:
+    environment:
+      # Use S3 for storage in AWS
+      - STORAGE_BACKEND=s3
+      - S3_RAW_BUCKET=${S3_RAW_BUCKET}
+      - S3_PROCESSED_BUCKET=${S3_PROCESSED_BUCKET}
+      - S3_QUARANTINE_BUCKET=${S3_QUARANTINE_BUCKET}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - LOG_LEVEL=INFO
+    # Override volumes - use EBS mounts instead of local bind mounts
+    volumes:
+      # State directory on EBS volume
+      - /mnt/rag-state:/app/.state
+      # Remove local data mounts - using S3 instead
+    # Production resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  etl-api:
+    environment:
+      # Use S3 for storage in AWS
+      - STORAGE_BACKEND=s3
+      - S3_RAW_BUCKET=${S3_RAW_BUCKET}
+      - S3_PROCESSED_BUCKET=${S3_PROCESSED_BUCKET}
+      - S3_QUARANTINE_BUCKET=${S3_QUARANTINE_BUCKET}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - LOG_LEVEL=INFO
+    # Override volumes
+    volumes:
+      # State directory on EBS volume
+      - /mnt/etl-state:/app/.state
+      # Remove local data mounts - using S3 instead
+    # Production resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 3G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+  opensearch:
+    # Use EBS volume for OpenSearch data
+    volumes:
+      - /mnt/opensearch-data:/usr/share/opensearch/data
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms2g -Xmx4g  # Production memory settings
+      - DISABLE_SECURITY_PLUGIN=false  # Enable security in production
+      - bootstrap.memory_lock=true
+      - logger.level=INFO
+    # Production resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 8G
+        reservations:
+          cpus: '1.0'
+          memory: 4G
+
+  opensearch-dashboards:
+    # Production resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  postgres:
+    # Use EBS volume for Postgres data
+    volumes:
+      - /mnt/postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}  # Must be set via environment
+    # Production resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+volumes:
+  # Override volumes to use EBS mounts
+  opensearch-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/opensearch-data
+
+  postgres-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/postgres-data
