@@ -7,8 +7,8 @@ services:
   rag-api:
     # Enable hot reload for development
     volumes:
-      - ./rag-system/src:/app/src:rw
-      - ./rag-system/config:/app/config:rw
+      - ../rag-system/src:/app/src:rw
+      - ../rag-system/config:/app/config:rw
     environment:
       - DEBUG=true
       - LOG_LEVEL=DEBUG
@@ -20,8 +20,8 @@ services:
   etl-api:
     # Enable hot reload for development
     volumes:
-      - ./ai-etl-framework/src:/app/src:rw
-      - ./ai-etl-framework/examples:/app/examples:rw
+      - ../ai-etl-framework/src:/app/src:rw
+      - ../ai-etl-framework/examples:/app/examples:rw
     environment:
       - DEBUG=true
       - LOG_LEVEL=DEBUG

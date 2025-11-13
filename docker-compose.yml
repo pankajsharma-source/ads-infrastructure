@@ -50,7 +50,7 @@ services:
 
   rag-api:
     build:
-      context: ./rag-system
+      context: ../rag-system
       dockerfile: Dockerfile
     container_name: rag-api
     depends_on:
@@ -68,12 +68,12 @@ services:
       - "8001:8000"
     volumes:
       # Shared data directories (read-only for raw data)
-      - ./data/raw:/app/data/raw:ro
-      - ./data/processed:/app/data/processed:ro
-      - ./data/indexed:/app/data/indexed
-      - ./data/quarantine/rag-failed:/app/quarantine
-      - ./output/rag:/app/output
-      - ./.state/rag:/app/.state
+      - ../data/raw:/app/data/raw:ro
+      - ../data/processed:/app/data/processed:ro
+      - ../data/indexed:/app/data/indexed
+      - ../data/quarantine/rag-failed:/app/quarantine
+      - ../output/rag:/app/output
+      - ../.state/rag:/app/.state
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -85,7 +85,7 @@ services:
   # ===== ETL FRAMEWORK =====
   etl-api:
     build:
-      context: ./ai-etl-framework
+      context: ../ai-etl-framework
       dockerfile: Dockerfile
     container_name: etl-api
     depends_on:
@@ -98,11 +98,11 @@ services:
       - "8002:8000"
     volumes:
       # Shared data directories
-      - ./data/raw:/app/data/raw:ro
-      - ./data/processed:/app/data/processed
-      - ./data/quarantine/etl-failed:/app/quarantine
-      - ./output/etl:/app/output
-      - ./.state/etl:/app/.state
+      - ../data/raw:/app/data/raw:ro
+      - ../data/processed:/app/data/processed
+      - ../data/quarantine/etl-failed:/app/quarantine
+      - ../output/etl:/app/output
+      - ../.state/etl:/app/.state
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -131,9 +131,11 @@ services:
 
 volumes:
   opensearch-data:
-    driver: local
+    external: true
+    name: ads_opensearch-data
   postgres-data:
-    driver: local
+    external: true
+    name: ads_postgres-data
 
 networks:
   default:
