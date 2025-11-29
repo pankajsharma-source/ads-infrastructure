@@ -59,7 +59,7 @@ services:
     environment:
       - OPENSEARCH_HOST=${OPENSEARCH_HOST:-http://opensearch}
       - OPENSEARCH_PORT=${OPENSEARCH_PORT:-9200}
-      - OPENSEARCH_INDEX=${OPENSEARCH_INDEX:-raglab-docs}
+      - OPENSEARCH_INDEX=${OPENSEARCH_INDEX:-sales-analytics}
       - OPENSEARCH_USE_SSL=${OPENSEARCH_USE_SSL:-false}
       - OPENSEARCH_VERIFY_CERTS=${OPENSEARCH_VERIFY_CERTS:-false}
       - STORAGE_BACKEND=local
@@ -67,10 +67,9 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      # Shared data directories (read-only for raw data)
-      - ../data/raw:/app/data/raw:ro
-      - ../data/processed:/app/data/processed:ro
-      - ../data/indexed:/app/data/indexed
+      # Shared data directories (read-only for source data)
+      - ../data/bronze:/app/data/bronze:ro
+      - ../data/gold/rag:/app/data/input:ro
       - ../data/quarantine/rag-failed:/app/quarantine
       - ../output/rag:/app/output
       - ../.state/rag:/app/.state
@@ -97,11 +96,11 @@ services:
     ports:
       - "8002:8000"
     volumes:
-      # Shared data directories
-      - ../data/raw:/app/data/raw:ro
-      - ../data/processed:/app/data/processed
+      # Shared data directories (Medallion Architecture)
+      - ../data/bronze:/app/data/bronze:ro
+      - ../data/silver:/app/data/silver
+      - ../data/gold:/app/data/gold
       - ../data/quarantine/etl-failed:/app/quarantine
-      - ../output/etl:/app/output
       - ../.state/etl:/app/.state
     restart: unless-stopped
     healthcheck:
