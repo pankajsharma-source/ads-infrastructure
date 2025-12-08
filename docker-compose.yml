@@ -93,6 +93,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://etl_user:${POSTGRES_PASSWORD:-etl_pass}@postgres:5432/etl
       - STORAGE_BACKEND=local
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     ports:
       - "8002:8000"
     volumes:
