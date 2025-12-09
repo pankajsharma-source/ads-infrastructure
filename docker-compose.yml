@@ -69,7 +69,7 @@ services:
     volumes:
       # Shared data directories (read-only for source data)
       - ../data/bronze:/app/data/bronze:ro
-      - ../data/gold/rag:/app/data/input:ro
+      - ../data/gold/rag:/app/data/gold/rag:ro
       - ../data/quarantine/rag-failed:/app/quarantine
       - ../output/rag:/app/output
       - ../.state/rag:/app/.state
