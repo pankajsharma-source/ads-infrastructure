@@ -9,7 +9,7 @@ AI Pipeline Studio is a microservices-based platform consisting of:
 1. **analytics-interface** - Web-based analytics and conversational interface
 2. **rag-system** - RAG (Retrieval-Augmented Generation) API with OpenSearch
 3. **ai-etl-framework** - AI-powered ETL pipeline framework
-4. **ads-infrastructure** (this repo) - Docker Compose orchestration & configuration
+4. **infrastructure** (this repo) - Docker Compose orchestration & configuration
 
 ## 📋 Prerequisites
 
@@ -24,11 +24,11 @@ AI Pipeline Studio is a microservices-based platform consisting of:
 
 ```bash
 # Create project directory
-mkdir -p ~/Documents/Development/ads
-cd ~/Documents/Development/ads
+mkdir -p ~/Documents/Development/thedatastudio
+cd ~/Documents/Development/thedatastudio
 
 # Clone all 4 repositories
-git clone https://github.com/pankajsharma-source/ads-infrastructure.git
+git clone https://github.com/pankajsharma-source/infrastructure.git
 git clone https://github.com/pankajsharma-source/analytics-interface.git
 git clone https://github.com/pankajsharma-source/rag-system.git
 git clone https://github.com/pankajsharma-source/ai-etl-framework.git
@@ -36,8 +36,8 @@ git clone https://github.com/pankajsharma-source/ai-etl-framework.git
 
 Your directory structure should look like:
 ```
-ads/
-├── ads-infrastructure/
+thedatastudio/
+├── infrastructure/
 ├── analytics-interface/
 ├── rag-system/
 └── ai-etl-framework/
@@ -46,7 +46,7 @@ ads/
 ### Step 2: Configure Environment
 
 ```bash
-cd ads-infrastructure
+cd infrastructure
 
 # Copy environment template
 cp .env.example ../.env
@@ -63,7 +63,7 @@ nano ../.env  # or use your preferred editor
 ### Step 3: Start Services
 
 ```bash
-# From ads-infrastructure directory
+# From infrastructure directory
 docker-compose up -d
 
 # Verify all services are running

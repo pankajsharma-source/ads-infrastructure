@@ -132,10 +132,10 @@ services:
 volumes:
   opensearch-data:
     external: true
-    name: ads_opensearch-data
+    name: thedatastudio_opensearch-data
   postgres-data:
     external: true
-    name: ads_postgres-data
+    name: thedatastudio_postgres-data
 
 networks:
   default:
