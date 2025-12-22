@@ -67,10 +67,8 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      # Shared data directories (read-only for source data)
-      - ../data/bronze:/app/data/bronze:ro
-      - ../data/gold/rag:/app/data/gold/rag:ro
-      - ../data/quarantine/rag-failed:/app/quarantine
+      # Simplified data mount (per-org structure inside /app/data)
+      - ../data:/app/data:ro
       - ../output/rag:/app/output
       - ../.state/rag:/app/.state
     restart: unless-stopped
@@ -97,11 +95,9 @@ services:
     ports:
       - "8002:8000"
     volumes:
-      # Shared data directories (Medallion Architecture)
-      - ../data/bronze:/app/data/bronze:ro
-      - ../data/silver:/app/data/silver
-      - ../data/gold:/app/data/gold
-      - ../data/quarantine/etl-failed:/app/quarantine
+      # Simplified data mount (per-org structure inside /app/data)
+      # bronze is shared, org folders contain gold/silver/quarantine
+      - ../data:/app/data
       - ../.state/etl:/app/.state
     restart: unless-stopped
     healthcheck:
